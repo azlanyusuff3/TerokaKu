@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b132b" />
+  <meta name="description" content="TerokaKu — aplikasi penerokaan dan pembelajaran visual untuk kanak-kanak." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="TerokaKu" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="icon" href="assets/icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>TerokaKu</title>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar glass">
+      <button id="brandBtn" class="brand" aria-label="TerokaKu Home">
+        <span class="brand-mark">✨</span>
+        <span>
+          <strong>TerokaKu</strong>
+          <small>Explore • Discover • Understand</small>
+        </span>
+      </button>
+      <div class="top-actions">
+        <button id="searchBtn" class="icon-btn" aria-label="Search">🔎</button>
+        <button id="installBtn" class="install-btn hidden">Install</button>
+        <button id="settingsBtn" class="avatar-btn" aria-label="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section id="homeView" class="view active">
+        <div class="hero-card">
+          <div class="hero-copy">
+            <span class="eyebrow">BELAJAR CARA TEROKA</span>
+            <h1>Dunia penuh benda menarik. <span>Jom sentuh & faham.</span></h1>
+            <p id="heroText">Pilih satu dunia, tekan apa yang menarik dan belajar melalui visual, audio, fakta ringkas dan aktiviti santai.</p>
+            <div class="hero-actions">
+              <button id="continueBtn" class="primary-btn">🚀 Mula Teroka</button>
+              <button id="surpriseBtn" class="secondary-btn">🎲 Kejutkan Saya</button>
+            </div>
+          </div>
+          <div class="hero-visual" aria-hidden="true">
+            <div class="mini-orbit orbit-a"><span>🌍</span></div>
+            <div class="mini-orbit orbit-b"><span>🪐</span></div>
+            <div class="mini-orbit orbit-c"><span>🚀</span></div>
+            <div class="hero-sun">☀️</div>
+          </div>
+        </div>
+
+        <section class="section-block">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">EXPLORE WORLDS</span>
+              <h2>Pilih dunia untuk diteroka</h2>
+            </div>
+            <button id="showAllBtn" class="text-btn">Lihat semua</button>
+          </div>
+          <div id="worldGrid" class="world-grid"></div>
+        </section>
+
+        <section class="two-col-home">
+          <article class="discovery-card glass-card">
+            <div class="card-head-row">
+              <div>
+                <span class="eyebrow">MY DISCOVERY BOOK</span>
+                <h3>Koleksi penemuan kamu</h3>
+              </div>
+              <div id="discoveryRing" class="progress-ring"><span>0</span></div>
+            </div>
+            <div id="recentDiscoveries" class="recent-discoveries"></div>
+            <button id="openDiscoveryBtn" class="wide-btn">📖 Buka Discovery Book</button>
+          </article>
+
+          <article class="daily-card glass-card">
+            <span class="eyebrow">DAILY DISCOVERY</span>
+            <div id="dailyIcon" class="daily-icon">🪐</div>
+            <h3 id="dailyTitle">Tahukah kamu?</h3>
+            <p id="dailyText">Saturn mempunyai cincin yang sangat besar tetapi kebanyakannya terdiri daripada ais dan batu.</p>
+            <button id="dailyExploreBtn" class="wide-btn alt">✨ Teroka fakta ini</button>
+          </article>
+        </section>
+      </section>
+
+      <section id="worldView" class="view">
+        <button class="back-btn" data-back="home">← Home</button>
+        <div id="worldHero" class="world-hero"></div>
+        <div id="worldContent"></div>
+      </section>
+
+      <section id="topicView" class="view">
+        <button class="back-btn" data-back="world">← Kembali</button>
+        <div id="topicContent"></div>
+      </section>
+
+      <section id="discoveryView" class="view">
+        <button class="back-btn" data-back="home">← Home</button>
+        <div class="page-title">
+          <span class="eyebrow">MY DISCOVERY BOOK</span>
+          <h1>Semua yang kamu dah jumpa ✨</h1>
+          <p>Tak perlu score tinggi. Lagi banyak kamu explore, lagi penuh buku ini.</p>
+        </div>
+        <div id="discoveryStats" class="stats-grid"></div>
+        <div id="discoveryGrid" class="discovery-grid"></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav glass" aria-label="Main Navigation">
+      <button class="nav-item active" data-nav="home"><span>🏠</span><small>Home</small></button>
+      <button class="nav-item" data-nav="explore"><span>🧭</span><small>Explore</small></button>
+      <button class="nav-item" data-nav="english"><span>🗣️</span><small>English</small></button>
+      <button class="nav-item" data-nav="book"><span>📖</span><small>Book</small></button>
+    </nav>
+  </div>
+
+  <dialog id="settingsDialog" class="modal-dialog">
+    <form method="dialog" class="modal-card">
+      <div class="modal-head"><div><span class="eyebrow">SETTINGS</span><h2>Teroka ikut cara kamu</h2></div><button value="close" class="icon-btn">✕</button></div>
+      <div class="settings-group">
+        <label>Umur / tahap penerangan</label>
+        <div id="ageOptions" class="segmented">
+          <button type="button" data-age="explorer">4–6<br><small>Explorer</small></button>
+          <button type="button" data-age="discoverer">7–9<br><small>Discoverer</small></button>
+          <button type="button" data-age="investigator">10–12<br><small>Investigator</small></button>
+        </div>
+      </div>
+      <div class="settings-group">
+        <label>Bahasa</label>
+        <div id="languageOptions" class="segmented">
+          <button type="button" data-language="ms">BM</button>
+          <button type="button" data-language="dual">BM + English</button>
+          <button type="button" data-language="en">English</button>
+        </div>
+      </div>
+      <div class="settings-group switch-row">
+        <div><strong>Audio & pronunciation</strong><small>Gunakan suara yang tersedia pada device</small></div>
+        <button type="button" id="audioToggle" class="toggle" aria-pressed="true"><span></span></button>
+      </div>
+      <button id="resetProgressBtn" type="button" class="danger-btn">Reset progress</button>
+    </form>
+  </dialog>
+
+  <dialog id="searchDialog" class="modal-dialog">
+    <div class="modal-card search-modal">
+      <div class="modal-head"><div><span class="eyebrow">SEARCH</span><h2>Apa kamu nak tahu?</h2></div><button id="closeSearchBtn" class="icon-btn">✕</button></div>
+      <input id="searchInput" class="search-input" placeholder="Contoh: Saturn, elephant, apple..." autocomplete="off" />
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
