@@ -22,7 +22,7 @@ function renderSolarSystem(){const planets=[['mercury','🪨',55,18,5],['venus',
 function renderEnglishDashboard(){return `<section class="english-dashboard"><article class="english-feature big"><span class="eyebrow">HOW WE LEARN</span><div class="big-emoji">🍎 🔊</div><h2>See → Hear → Understand → Use</h2><p style="color:var(--muted)">English diajar ikut benda sebenar, bukan hafal grammar dahulu.</p><div class="lesson-path"><div class="lesson-step"><span class="step-no">1</span><div><b>See it</b><small style="display:block;color:var(--muted)">🍎 Apple</small></div></div><div class="lesson-step"><span class="step-no">2</span><div><b>Hear it</b><small style="display:block;color:var(--muted)">Tekan audio pronunciation</small></div></div><div class="lesson-step"><span class="step-no">3</span><div><b>Use it</b><small style="display:block;color:var(--muted)">“I eat an apple.”</small></div></div><div class="lesson-step"><span class="step-no">4</span><div><b>Build it</b><small style="display:block;color:var(--muted)">Susun perkataan menjadi ayat</small></div></div></div></article><article class="english-feature"><span class="eyebrow">QUICK START</span><h2>🔤 Vocabulary</h2><p>Gambar + meaning + pronunciation + simple sentence.</p><button class="wide-btn" data-topic="english-first-words">Mula belajar</button></article><article class="english-feature"><span class="eyebrow">PLAY</span><h2>🔎 Word Hunt</h2><p>Dengar arahan dan cari objek yang betul.</p><button class="wide-btn alt" data-topic="word-hunt">Main Word Hunt</button></article></section>`}
 function bindDynamic(){$$('[data-topic]').forEach(el=>el.onclick=()=>openTopic(el.dataset.topic));}
 function addDiscovery(id){if(!state.discoveries.includes(id)){state.discoveries.push(id);save();const t=TEROKA_DATA.topics[id];showToast(`✨ New discovery: ${t.ms||t.name}`)}}
-function openTopic(id){const t=TEROKA_DATA.topics[id];if(!t)return;state.currentTopic=id;state.currentWorld=t.world;addDiscovery(id);setView('topic');$('#topicContent').innerHTML=renderTopic(t,id);bindTopicInteractions(t,id);}
+function openTopic(id){const t=TEROKA_DATA.topics[id];if(!t)return;state.currentTopic=id;state.currentWorld=t.world;addDiscovery(id);setView('topic');$('#topicContent').innerHTML=renderTopic(t,id);bindTopicInteractions(t,id);loadEncyclopediaPhoto(id,t);}
 function renderTopic(t,id){
   if(t.mode==='vocab')return renderVocab(t,id);
   if(t.mode==='sentence')return renderSentence(t,id);
@@ -30,7 +30,55 @@ function renderTopic(t,id){
   if(t.mode==='story')return renderStory(t,id);
   if(t.mode==='hunt')return renderHunt(t,id);
   const summary=t.summary?.[state.age]||t.short||'';
-  return `<div class="topic-hero"><div class="topic-emoji">${t.icon}</div><div><span class="eyebrow">${worldMap[t.world]?.name||'DISCOVERY'}</span><h1>${displayName(t)}</h1><div class="topic-subtitle">${t.short||''}</div><p class="topic-summary">${summary}</p><div class="topic-actions"><button class="pill-btn" id="speakTopic">🔊 Dengar penerangan</button><button class="pill-btn" id="markAgain">✨ Discovered</button>${t.name!==t.ms?`<button class="pill-btn" id="speakWord">🗣️ ${t.name}</button>`:''}</div></div></div>${t.mode==='solar'?renderSolarSystem():''}${renderDeepJourney(t,id)}<div class="fact-layout"><section class="info-panel"><span class="eyebrow">QUICK RECAP</span><h2>Perkara penting</h2><div class="fact-list">${(t.facts||[]).map(f=>`<div class="fact-row"><span style="font-size:25px">${f[0]}</span><div><b>${f[1]}</b><small>${f[2]}</small></div></div>`).join('')}</div></section><section class="info-panel why-card"><span class="eyebrow">❓ WHY?</span><h2>${t.why?.[0]||'Soalan untuk difikirkan'}</h2><p style="color:#e8ddc8;line-height:1.7">${t.why?.[1]||'Cuba terangkan semula dengan ayat sendiri. Bila kita boleh menerangkan sesuatu, biasanya kita lebih betul-betul faham.'}</p><button class="pill-btn" id="speakWhy">🔊 Dengarkan</button></section></div>${renderEnglishBridge(t)}${renderCompare(t,id)}${renderCrossLink(t)}`;
+  return `<div class="topic-hero"><div class="topic-emoji">${t.icon}</div><div><span class="eyebrow">${worldMap[t.world]?.name||'DISCOVERY'}</span><h1>${displayName(t)}</h1><div class="topic-subtitle">${t.short||''}</div><p class="topic-summary">${summary}</p><div class="topic-actions"><button class="pill-btn" id="speakTopic">🔊 Dengar penerangan</button><button class="pill-btn" id="markAgain">✨ Discovered</button>${t.name!==t.ms?`<button class="pill-btn" id="speakWord">🗣️ ${t.name}</button>`:''}</div></div></div>${t.mode==='solar'?renderSolarSystem():''}${renderEncyclopediaLens(t,id)}${renderDeepJourney(t,id)}<div class="fact-layout"><section class="info-panel"><span class="eyebrow">QUICK RECAP</span><h2>Perkara penting</h2><div class="fact-list">${(t.facts||[]).map(f=>`<div class="fact-row"><span style="font-size:25px">${f[0]}</span><div><b>${f[1]}</b><small>${f[2]}</small></div></div>`).join('')}</div></section><section class="info-panel why-card"><span class="eyebrow">❓ WHY?</span><h2>${t.why?.[0]||'Soalan untuk difikirkan'}</h2><p style="color:#e8ddc8;line-height:1.7">${t.why?.[1]||'Cuba terangkan semula dengan ayat sendiri. Bila kita boleh menerangkan sesuatu, biasanya kita lebih betul-betul faham.'}</p><button class="pill-btn" id="speakWhy">🔊 Dengarkan</button></section></div>${renderEnglishBridge(t)}${renderCompare(t,id)}${renderCrossLink(t)}`;
+}
+
+function encyclopediaText(t,id){
+  const chapters=typeof DEEP_CONTENT!=='undefined'?(DEEP_CONTENT[id]||[]):[];
+  return [t.short,...(t.facts||[]).flat(),...(t.why||[]),...chapters.flatMap(c=>[c.title,c.lead,c.detail,...(c.bullets||[]),c.investigator])].filter(Boolean).join(' ').toLowerCase();
+}
+function encyclopediaGlossary(t,id){
+  if(typeof ENCYCLOPEDIA==='undefined')return[];
+  const hay=encyclopediaText(t,id);
+  return Object.entries(ENCYCLOPEDIA.glossary).filter(([key])=>hay.includes(key)).slice(0,6).map(([,v])=>v);
+}
+function renderEncyclopediaLens(t,id){
+  if(t.world==='english')return'';
+  const chapters=typeof DEEP_CONTENT!=='undefined'?(DEEP_CONTENT[id]||[]):[];
+  const fields=(typeof ENCYCLOPEDIA!=='undefined'&&ENCYCLOPEDIA.field[t.world])||['Pengetahuan','Discovery'];
+  const glossary=encyclopediaGlossary(t,id);
+  const fact=(t.facts||[])[0];
+  const didYouKnow=fact?.[2]||chapters[0]?.bullets?.[0]||t.short||'';
+  const progress=getTopicProgress(id).size;
+  return `<section class="encyclopedia-lens" id="encyclopediaLens">
+    <div class="encyclopedia-titlebar"><div><span class="eyebrow">📚 ENCYCLOPEDIA LENS</span><h2>Kenali ${t.ms||t.name} dari banyak sudut</h2><p>${fields[0]} · ${fields[1]} · ${chapters.length} bab penerokaan</p></div><span class="encyclopedia-stamp">${progress}/${chapters.length||0}<small>bab</small></span></div>
+    <div class="encyclopedia-grid">
+      <article class="encyclopedia-photo-card"><div id="topicPhotoWrap" class="topic-photo-wrap"><div class="photo-fallback"><span>${t.icon}</span><small>Memuatkan gambar sebenar…</small></div><img id="topicPhoto" alt="Gambar sebenar ${t.ms||t.name}" hidden><div class="photo-caption"><b id="topicPhotoLabel">${t.ms||t.name}</b><a id="topicPhotoSource" href="#" target="_blank" rel="noopener" hidden>Wikipedia / Wikimedia ↗</a></div></div></article>
+      <article class="encyclopedia-atglance"><span class="mini-label">AT A GLANCE</span><div class="encyclopedia-path"><span>${worldMap[t.world]?.icon||'🧭'}</span><b>${worldMap[t.world]?.name||fields[0]}</b><i>›</i><strong>${t.ms||t.name}</strong></div><div class="encyclopedia-mini-facts">${(t.facts||[]).slice(0,4).map(f=>`<div><span>${f[0]}</span><b>${f[1]}</b><small>${f[2]}</small></div>`).join('')}</div></article>
+    </div>
+    ${chapters.length?`<div class="encyclopedia-index"><div class="index-head"><span class="mini-label">QUICK INDEX</span><small>Tekan untuk lompat terus ke bab</small></div><div class="index-chips">${chapters.map((c,i)=>`<button type="button" class="index-chip" data-chapter-jump="${i}"><span>${i+1}</span>${c.title}</button>`).join('')}</div></div>`:''}
+    <div class="curiosity-grid"><article class="curiosity-card"><span class="mini-label">✨ DID YOU KNOW?</span><p>${didYouKnow}</p></article><article class="curiosity-card question"><span class="mini-label">❓ BIG QUESTION</span><b>${t.why?.[0]||'Apa yang membuat topik ini menarik?'}</b><p>${t.why?.[1]||'Cari jawapannya semasa kamu membaca bab di bawah.'}</p></article></div>
+    ${glossary.length?`<div class="encyclopedia-glossary"><div class="index-head"><span class="mini-label">🔤 GLOSSARY</span><small>Istilah penting yang muncul dalam topik ini</small></div><div class="glossary-grid">${glossary.map(g=>`<button type="button" class="glossary-term" data-glossary-term="${g[0]}" data-glossary-def="${g[1]}"><b>${g[0]}</b><small>Tekan untuk maksud</small></button>`).join('')}</div><div id="glossaryExplain" class="glossary-explain">Pilih satu istilah untuk lihat maksud ringkas.</div></div>`:''}
+  </section>`;
+}
+async function loadEncyclopediaPhoto(id,t){
+  const img=$('#topicPhoto'),wrap=$('#topicPhotoWrap'),source=$('#topicPhotoSource');
+  if(!img||!wrap||typeof ENCYCLOPEDIA==='undefined')return;
+  const title=ENCYCLOPEDIA.wikiTitle[id]||t.name;
+  try{
+    const r=await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`,{headers:{'Accept':'application/json'}});
+    if(!r.ok)throw new Error('photo unavailable');
+    const d=await r.json();
+    const src=d.thumbnail?.source||d.originalimage?.source;
+    if(!src)throw new Error('no image');
+    img.onload=()=>{img.hidden=false;wrap.classList.add('has-photo');};
+    img.src=src; img.alt=`${t.ms||t.name} — gambar rujukan`;
+    if(source&&d.content_urls?.desktop?.page){source.href=d.content_urls.desktop.page;source.hidden=false;}
+  }catch(e){wrap.classList.add('photo-unavailable');const f=wrap.querySelector('.photo-fallback small');if(f)f.textContent='Gambar online tak tersedia — ikon digunakan.';}
+}
+function bindEncyclopediaLens(){
+  $$('[data-chapter-jump]').forEach(btn=>btn.onclick=()=>{const target=$(`.learning-chapter[data-chapter="${btn.dataset.chapterJump}"]`);if(target){target.open=true;target.scrollIntoView({behavior:'smooth',block:'start'});}});
+  $$('[data-glossary-term]').forEach(btn=>btn.onclick=()=>{const out=$('#glossaryExplain');if(out){out.innerHTML=`<b>${btn.dataset.glossaryTerm}</b><span>${btn.dataset.glossaryDef}</span>`;}speak(`${btn.dataset.glossaryTerm}. ${btn.dataset.glossaryDef}`,'ms-MY');});
 }
 
 function getTopicProgress(id){return new Set(state.topicProgress[id]||[])}
@@ -70,7 +118,7 @@ function renderSentence(t){state.sentenceIndex=(state.sentenceIndex||0)%t.senten
 function renderConversation(t){return `<div class="page-title"><span class="eyebrow">ENGLISH WORLD · SPEAK</span><h1>💬 Everyday Conversation</h1><p>Tekan setiap ayat untuk dengar cara ia disebut.</p></div>${t.scenes.map(s=>`<section class="info-panel" style="margin-bottom:14px"><h2>${s.place}</h2><div class="fact-list">${s.lines.map(l=>`<button class="fact-row convo-line" data-say="${l[1]}" style="border:0;color:white;text-align:left"><span style="font-size:27px">${l[0]}</span><div><b>${l[1]}</b><small>Tap to listen</small></div></button>`).join('')}</div></section>`).join('')}`}
 function renderStory(t){const words=t.story.split(' ');return `<div class="page-title"><span class="eyebrow">ENGLISH WORLD · READING</span><h1>📖 Mini Story</h1><p>Tekan satu-satu perkataan atau dengar seluruh cerita.</p></div><section class="info-panel"><div class="story-box">${words.map(w=>`<button class="story-word" data-say="${w.replace(/[.,!?]/g,'')}">${w} </button>`).join('')}</div><div class="topic-actions"><button id="readStory" class="primary-btn">🔊 Read the story</button></div></section>`}
 function renderHunt(t){const target=t.hunt[Math.floor(Math.random()*t.hunt.length)][1];state.huntTarget=target;return `<div class="page-title"><span class="eyebrow">ENGLISH WORLD · GAME</span><h1>🔎 Word Hunt</h1><p>Dengar arahan dan cari objek yang betul.</p></div><section class="info-panel"><div style="text-align:center"><div style="font-size:20px;font-weight:900;margin-bottom:12px">Can you find the <span style="color:var(--yellow)">${target}</span>?</div><button id="huntSpeak" class="primary-btn">🔊 Listen</button></div><div class="vocab-grid" style="margin-top:18px">${[...t.hunt].sort(()=>Math.random()-.5).map(v=>`<button class="vocab-card hunt-item" data-answer="${v[1]}"><span class="emoji">${v[0]}</span><strong>${v[1]}</strong></button>`).join('')}</div><div id="huntFeedback" class="feedback" style="text-align:center"></div></section>`}
-function bindTopicInteractions(t,id){bindDynamic();$('#speakTopic')?.addEventListener('click',()=>speak(t.summary?.[state.age]||t.short,state.language==='en'?'en-US':'ms-MY'));$('#speakWord')?.addEventListener('click',()=>speak(t.name,'en-US'));$('#speakWhy')?.addEventListener('click',()=>speak(`${t.why?.[0]||''} ${t.why?.[1]||''}`,state.language==='en'?'en-US':'ms-MY'));$$('[data-bridge]').forEach(el=>el.onclick=()=>speak(el.dataset.bridge,'en-US'));$$('[data-vocab]').forEach(el=>el.onclick=()=>{const v=t.vocab[+el.dataset.vocab];speak(`${v[1]}. ${v[3]}`,'en-US');showToast(`${v[1]} = ${v[2]}`)});$$('.convo-line,[data-say]').forEach(el=>el.onclick=()=>speak(el.dataset.say,'en-US'));$('#readStory')?.addEventListener('click',()=>speak(t.story,'en-US'));bindDeepJourney(t,id);if(t.mode==='sentence')bindSentence(t,id);if(t.mode==='hunt')bindHunt(t,id);}
+function bindTopicInteractions(t,id){bindDynamic();bindEncyclopediaLens();$('#speakTopic')?.addEventListener('click',()=>speak(t.summary?.[state.age]||t.short,state.language==='en'?'en-US':'ms-MY'));$('#speakWord')?.addEventListener('click',()=>speak(t.name,'en-US'));$('#speakWhy')?.addEventListener('click',()=>speak(`${t.why?.[0]||''} ${t.why?.[1]||''}`,state.language==='en'?'en-US':'ms-MY'));$$('[data-bridge]').forEach(el=>el.onclick=()=>speak(el.dataset.bridge,'en-US'));$$('[data-vocab]').forEach(el=>el.onclick=()=>{const v=t.vocab[+el.dataset.vocab];speak(`${v[1]}. ${v[3]}`,'en-US');showToast(`${v[1]} = ${v[2]}`)});$$('.convo-line,[data-say]').forEach(el=>el.onclick=()=>speak(el.dataset.say,'en-US'));$('#readStory')?.addEventListener('click',()=>speak(t.story,'en-US'));bindDeepJourney(t,id);if(t.mode==='sentence')bindSentence(t,id);if(t.mode==='hunt')bindHunt(t,id);}
 function bindDeepJourney(t,id){
   const chapters=typeof DEEP_CONTENT!=='undefined'?(DEEP_CONTENT[id]||[]):[];
   if(!chapters.length)return;
