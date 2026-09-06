@@ -1,38 +1,30 @@
-# TerokaKu PWA v1.0.0
+# TerokaKu PWA v1.1.0 — Deep Learning
 
-Offline-first visual discovery app for kids.
+TerokaKu ialah offline-first Explore & Learn PWA untuk kanak-kanak. v1.1 menukar topik biasa daripada satu halaman ringkas kepada **Deep Learning Journey** berperingkat.
 
-## Included in v1
-- 13 Explore Worlds: Space, Animals, Vehicles, Earth, Ocean, Dinosaurs, Plants, Human Body, How Things Work, Countries & World, Science, Technology, English World.
-- Interactive Solar System visual with tappable planets.
-- Age-based explanation levels: Explorer (4–6), Discoverer (7–9), Investigator (10–12).
-- BM / BM+English / English display modes.
-- Device text-to-speech for explanations, English words, conversations and mini stories.
-- English modules: vocabulary packs, Sentence Builder, Everyday Conversation, Mini Story, Word Hunt.
-- My Discovery Book saved with localStorage.
-- Installable PWA + offline service worker.
-- No login, no cloud database, no analytics, no external runtime dependency.
+## Apa yang baru dalam v1.1
 
-## Run locally
-A service worker requires HTTP/HTTPS (not file://). From this folder:
+- 72 topik non-English kini mempunyai kandungan deep learning khusus.
+- 364 learning chapters keseluruhan.
+- Setiap topik mempunyai sekurang-kurangnya 5 bab; topik utama seperti Sun mempunyai sehingga 7 bab.
+- Chapter progress disimpan secara local pada device (`localStorage`).
+- Buka topik tidak lagi bermaksud selesai: anak boleh tandakan setiap bab selepas faham.
+- Auto-buka bab seterusnya apabila satu bab diselesaikan.
+- Audio “Dengar bab ini” menggunakan text-to-speech device.
+- Kandungan berubah ikut tahap umur:
+  - Explorer 4–6: penerangan inti + point terpilih.
+  - Discoverer 7–9: penerangan penuh.
+  - Investigator 10–12: penerangan penuh + nota lanjutan bila tersedia.
+- Fakta Solar System/Sun dirangka berasaskan rujukan utama NASA Science.
+- PWA/service worker dikemas kini ke cache `terokaku-v1.1.0`.
+- Semua progress v1.0 Discovery Book kekal kerana storage key sedia ada tidak diubah; v1.1 hanya menambah `tk_topic_progress`.
 
-```bash
-python -m http.server 8080
-```
+## Kandungan sedia ada yang dikekalkan
 
-Then open http://localhost:8080
+13 worlds, interactive Solar System, English World, vocabulary + pronunciation, Sentence Builder, Conversation, Mini Story, Word Hunt, English Bridge, Discovery Book, badges, age setting, BM/English/BM+English, search, installable PWA dan offline support.
 
 ## Deploy
-Upload every file/folder in this project to GitHub Pages or Cloudflare Pages. No build command is required.
 
-For Cloudflare Pages using GitHub:
-- Framework preset: None
-- Build command: leave blank
-- Build output directory: `/` (or the repository root option shown by Cloudflare)
+Tiada build step / npm / database diperlukan. Upload semua fail dalam folder ini ke GitHub Pages atau Cloudflare Pages.
 
-## Data & privacy
-Discovery progress and settings are stored only in the browser/device localStorage. Clearing site data removes the progress.
-
-## Notes
-The Solar System animation is intentionally illustrative and not to astronomical scale.
-Speech quality/voice availability depends on voices installed by the OS/browser.
+Main file: `index.html`
